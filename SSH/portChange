@@ -1,0 +1,65 @@
+# Changing the SSH Port for Security
+
+## Overview
+Changing the default SSH port (**22**) enhances security by reducing the risk of brute-force attacks.
+
+## Steps to Change SSH Port
+
+### Step 1: Open SSH Configuration File
+```sh
+sudo vi /etc/ssh/sshd_config
+```
+
+### Step 2: Modify the Port Number
+Find this line:
+```sh
+#Port 22
+```
+Uncomment it and change it to a custom port (e.g., **2222**):
+```sh
+Port 2222
+```
+
+### Step 3: Allow the New SSH Port in Firewall
+#### For UFW (Ubuntu/Debian)
+```sh
+sudo ufw allow 2222/tcp
+sudo ufw reload
+```
+
+#### For firewalld (CentOS/RHEL)
+```sh
+sudo firewall-cmd --permanent --add-port=2222/tcp
+sudo firewall-cmd --reload
+```
+
+#### For iptables
+```sh
+sudo iptables -A INPUT -p tcp --dport 2222 -j ACCEPT
+```
+
+### Step 4: Restart SSH Service
+```sh
+sudo systemctl restart sshd
+```
+
+### Step 5: Verify SSH is Running on the New Port
+```sh
+ss -tlnp | grep ssh
+```
+
+### Step 6: Connect Using the New Port
+```sh
+ssh -p 2222 user@server-ip
+```
+
+## Additional Security Tips
+- **Disable Root Login:** Set `PermitRootLogin no` in `/etc/ssh/sshd_config`.
+- **Use SSH Key Authentication:** Disable password login by setting `PasswordAuthentication no`.
+
+
+## Notes
+- Ensure your chosen port is **not blocked** by any firewall or ISP.
+- Use ports **above 1024** to avoid conflicts with system services.
+
+**Done! Our SSH port is now more secure.** 🚀
